@@ -1,11 +1,11 @@
 import random
 from operator import itemgetter
 
-#her bir ürün uzunluğunda tablo tutucam bu sayede cross over yaptığımda sadece ürünlerin satıldığı şehirleri değiştireceğim
-#productA için eleman değeri 0 ise o elemanın x1 şehrinde satıldığı anlaşılacaktır, 1 ise x2, 2 ise x3, 3 ise x4, 4 ise x5.
-#Aynı zamanda  priceA dizisinin 0 ıncı indexinde x1'in şehri için A ürününün fiyatı verilecektir.
-#x2 = 1. index yani priceA veya priceB.. de 1. indexinde o ürün için x2 şehrindeki fiyat tutulacak
-#bu mantık tüm ürünler ve şehirler bazında uygulanacaktır.
+# I will keep a table of each product length so that when I cross over, I will only change the cities where the products are sold.
+# For productA, if the element value is 0, it will be understood that the item is sold in the city of x1, if it is 1 x2, if 2 is x3, if 3 is x4, if 4 is x5.
+# At the same time, the price of product A will be given for the city of x1 in index 0 of the priceA array.
+# x2 = In the 1st index, that is, priceA or priceB.., the price in the city x2 for that product will be kept in the 1st index.
+# this logic will be applied based on all products and cities.
 
 priceA = [1, 4, 6, 4, 4]
 priceB = [3, 8, 2, 5, 15]
@@ -21,11 +21,11 @@ allPrice.append(priceD)
 allPrice.append(priceE)
 #print(allPrice)
 
-#hangi ürünün hangi şehirde ne kadar satıldığını doldurmayı başlangıçta random olarak yapıyoruz
-#ben eşleştirme matrisini ürün bazında böldüğüm için A,B,C,D,E ürünlerinin her birini hangi şehirde satacağımı belirleyeceğim
+# we do it randomly at the beginning to fill in how much of which product is sold in which city
+# I will determine in which city I will sell each of the A, B, C, D, and E products as I divide the matching matrix by product
 
 def createMatchMatrix():
-    productA = []  # 30     uzunluğu 30 olmak zorunda fazla ya da az olamaz
+    productA = []  # 30     length has to be 30, can't be more or less
     productB = []  # 40
     productC = []  # 20
     productD = []  # 40
@@ -77,9 +77,9 @@ def findf2or3Rate(xn):
 
 def fitness(products,prices):
     #soft contrains
-    fbase = 0 #Durum 0: fbase hesabı
+    fbase = 0 #Case 0: fbase calculation
 
-    f2 = 0 #Durum 2  değişkenleri
+    f2 = 0 #Case 2 variables
     x1 = []
     x2 = []
     x3 = []
@@ -89,13 +89,13 @@ def fitness(products,prices):
     fx2base = 0
     fx3base = 0
     fx4base = 0
-    fx5base = 0 #Durum 2 değişkenleri
+    fx5base = 0 #Case 2 variables
 
-    #Durum 1: tüm şehirlerin ziyaret edilmesi
+    # Case 1: all cities visited
     flag = [0,0,0,0,0]
     f1 = 0
     for i in range(5):
-        x1.append(products[i].count(0)) #durum 2 için gereken parametrelerin hesabı
+        x1.append(products[i].count(0)) # calculation of parameters required for case 2
         x2.append(products[i].count(1))
         x3.append(products[i].count(2))
         x4.append(products[i].count(3))
@@ -104,26 +104,26 @@ def fitness(products,prices):
         fx2base = fx2base + x2[i] * prices[i][1]
         fx3base = fx3base + x3[i] * prices[i][2]
         fx4base = fx4base + x4[i] * prices[i][3]
-        fx5base = fx5base + x5[i] * prices[i][4] #durum 2 sonu
+        fx5base = fx5base + x5[i] * prices[i][4] #end of case 2
         for j in range(5):
-            p = prices[i][j] #durum 0 fbase hesabı
+            p = prices[i][j] # case 0 fbase calculation
             itemNum = products[i].count(j)
-            fbase = fbase + (p * itemNum) #durum 0 fbase hesabı
-            if (products[i].count(j) > 0): #durum 1 kontrolu
+            fbase = fbase + (p * itemNum) #case 0 fbase calculation
+            if (products[i].count(j) > 0): #case 1 check
                 flag[j] = 1
 
-    if (flag.count(0) == 0): #durum 1 kontrolu
+    if (flag.count(0) == 0): #case 1 check
         f1 = 100
 
-    #Durum 2: Her bir şehir için, Her üründen aynı miktarda satılması
+    #Case 2: For each city, the same quantity of each product is sold
 
     f2 = f2 + fx1base * findf2or3Rate(x1)
     f2 = f2 + fx2base * findf2or3Rate(x2)
     f2 = f2 + fx3base * findf2or3Rate(x3)
     f2 = f2 + fx4base * findf2or3Rate(x4)
     f2 = f2 + fx5base * findf2or3Rate(x5)
-    # Durum 3: Tüm şehirlerde dengeli miktarda ürün satılması durumu (en iyi durum hepsinde 30 ürün satılması)
-    #bunun için tüm şehirlerde satılan toplam ürün miktarlarını tuttuğumuz bir dizi oluşturalım
+   # Situation 3: A balanced amount of items sold in all cities (best case 30 items sold in all)
+     #for this, let's create an array where we keep the total amount of products sold in all cities
     f3 = 0
     Cities = [sum(x1), sum(x2), sum(x3), sum(x4), sum(x5)]
     f3 = f3 + fbase * findf2or3Rate(Cities)
@@ -160,7 +160,7 @@ for i in range(10000):
     #cross-over:
     if ranked[len(ranked)-1][0] >= 1400:
         break
-    bestStates = ranked[-100:-1] #cross over yapılacak genleri en iyi 100 matristen seçtim
+    bestStates = ranked[-100:-1]# I chose the genes to cross over from the top 100 matrices
     gens = []
     for g in bestStates:
         for i in range(5):
@@ -177,7 +177,7 @@ for i in range(10000):
                     gens.append(g[1][i][j])
     newGen = []
     for _ in range(1000):
-        A = []  # 30     uzunluğu 30 olmak zorunda fazla ya da az olamaz
+        A = []  # 30    length has to be 30, can't be more or less
         B = []  # 40
         C = []  # 20
         D = []  # 40
